@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from .models import predictionrequest
+from .models import Prediction
 
 def create_prediction_record(
     db: Session,
@@ -13,7 +13,7 @@ def create_prediction_record(
     decision: str,
     threshold_used: float
 ):
-    record = predictionrequest(
+    record = Prediction(
         no_of_dependents=no_of_dependents,
         income_annum=income_annum,
         loan_amount=loan_amount,
