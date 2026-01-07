@@ -1,22 +1,21 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
+mysql_user = os.environ["MYSQLUSER"]
+mysql_password = os.environ["MYSQLPASSWORD"]
+mysql_host = os.environ["MYSQLHOST"]
+mysql_port = os.environ["MYSQLPORT"]
+mysql_db = os.environ["MYSQLDATABASE"]
 
-db_user = os.getenv("db_user")
-db_password = os.getenv("db_password")
-db_host = os.getenv("db_host")
-db_port = os.getenv("db_port")
-db_name = os.getenv("db_name")
-
-db_url = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+db_url = (
+    f"mysql+pymysql://{mysql_user}:{mysql_password}"
+    f"@{mysql_host}:{mysql_port}/{mysql_db}"
+)
 
 engine = create_engine(db_url, pool_pre_ping=True)
 
 sessionlocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
-
 base = declarative_base()
 
 def get_db():
