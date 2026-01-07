@@ -12,6 +12,11 @@ from app.config import approval_threshold
 from typing import List
 from app.schemas import predictionout
 from app.db.crud import get_prediction_records
+from app.db.database import engine
+from app.db.models import base
+
+base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 
