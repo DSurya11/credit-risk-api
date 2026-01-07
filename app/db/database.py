@@ -1,34 +1,39 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from dotenv import load_dotenv
 import os
 
-engine = None
-sessionlocal = None
+load_dotenv()
 
-base = declarative_base()
+db_user = os.getenv("db_user")
+db_password = os.getenv("db_password")
+db_host = os.getenv("db_host")
+db_port = os.getenv("db_port")
+db_name = os.getenv("db_name")
 
-def init_db():
-    global engine, sessionlocal
+db_url = (
+    f"mysql+pymysql://{db_user}:{db_password}"
+    f"@{db_host}:{db_port}/{db_name}"
+)
 
-    if engine is None:
-        mysql_user = os.environ["MYSQLUSER"]
-        mysql_password = os.environ["MYSQLPASSWORD"]
-        mysql_host = os.environ["MYSQLHOST"]
-        mysql_port = os.environ["MYSQLPORT"]
-        mysql_db = os.environ["MYSQLDATABASE"]
+engine = create_engine(
+    db_url,
+    pool_pre_ping=True,
+    pool_recycle=1800,
+    pool_size=5,
+    max_overflow=10,
+    connect_args={"connect_timeout": 10}
+)
 
-        db_url = (
-            f"mysql+pymysql://{mysql_user}:{mysql_password}"
-            f"@{mysql_host}:{mysql_port}/{mysql_db}"
-        )
+sessionlocal = sessionmaker(
+    bind=engine,
+    autocommit=False,
+    autoflush=False
+)
 
-        engine = create_engine(db_url, pool_pre_ping=True)
-        sessionlocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+Base = declarative_base()
 
 def get_db():
-    if sessionlocal is None:
-        init_db()
-
     db = sessionlocal()
     try:
         yield db
