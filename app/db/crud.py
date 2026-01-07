@@ -29,14 +29,12 @@ def create_prediction_record(
     db.add(record)
     db.commit()
     db.refresh(record)
-
     return record
 
 
 def get_prediction_records(db: Session, limit: int = 10, offset: int = 0):
     return (
         db.query(Prediction)
-        .order_by(Prediction.created_at.desc())
         .offset(offset)
         .limit(limit)
         .all()
