@@ -16,16 +16,9 @@ from app.db.crud import get_prediction_records
 from app.db.database import engine, Base
 import app.db.models
 
-from app.db.database import engine, Base
-import app.db.models
-
 
 app = FastAPI()
 
-@app.post("/_init_db")
-def init_db():
-    Base.metadata.create_all(bind=engine)
-    return {"status": "tables created"}
 
 
 
