@@ -13,9 +13,18 @@ from typing import List
 from app.schemas import predictionout
 from app.db.crud import get_prediction_records
 
+from app.db.database import engine, Base
+import app.db.models
+
+
 
 
 app = FastAPI()
+
+@app.on_event("startup")
+def create_tables_once():
+    Base.metadata.create_all(bind=engine)
+    print("tables created")
 
 @app.get("/")
 def root():
