@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+
 
 class predictionout(BaseModel):
     id: int
@@ -16,8 +17,7 @@ class predictionout(BaseModel):
     decision: str
     threshold_used: float
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class loaninput(BaseModel):
@@ -27,6 +27,7 @@ class loaninput(BaseModel):
     loan_term: int
     cibil_score: int
     bank_asset_value: float
+
 
 class predictionresponse(BaseModel):
     risk_probability: float
