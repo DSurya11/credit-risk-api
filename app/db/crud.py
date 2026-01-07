@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from .models import Prediction
 
+
 def create_prediction_record(
     db: Session,
     no_of_dependents: int,
@@ -34,8 +35,8 @@ def create_prediction_record(
 
 def get_prediction_records(db: Session, limit: int = 10, offset: int = 0):
     return (
-        db.query(predictionrequest)
-        .order_by(predictionrequest.created_at.desc())
+        db.query(Prediction)
+        .order_by(Prediction.created_at.desc())
         .offset(offset)
         .limit(limit)
         .all()
