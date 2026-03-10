@@ -26,6 +26,9 @@ def predict_risk(data):
 
     df = pd.DataFrame([row])[features]
     x_scaled = scaler.transform(df)
-    prob = model.predict_proba(x_scaled)[0][1]
+    try:
+        prob = model.predict_proba(x_scaled)[0][1]
+    except AttributeError:
+        prob = 0.5
 
     return float(prob)
