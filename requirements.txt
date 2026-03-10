@@ -4,7 +4,7 @@ pydantic
 sqlalchemy
 pymysql
 python-dotenv
-scikit-learn
+scikit-learn==1.3.2
 joblib
 pandas
 cryptography
