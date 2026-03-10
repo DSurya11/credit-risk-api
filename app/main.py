@@ -26,7 +26,8 @@ async def lifespan(app: FastAPI):
         create_tables()
         logger.info("Database tables ready.")
     except Exception as e:
-        logger.error(f"Failed to create database tables: {e}")
+        logger.error(f"Failed to create database tables: {e}", exc_info=True)
+        # Don't block startup — endpoints will return clear errors if DB is down
     yield
 
 
