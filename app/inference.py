@@ -7,6 +7,10 @@ model = bundle["model"]
 scaler = bundle["scaler"]
 features = bundle["features"]
 
+for t in model.estimators_:
+    if not hasattr(t, "monotonic_cst"):
+        t.monotonic_cst = None
+
 def predict_risk(data):
     row = {
         "no_of_dependents": data.no_of_dependents,
