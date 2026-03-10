@@ -1,18 +1,16 @@
 import joblib
 import pandas as pd
+import sklearn
 
-bundle = joblib.load("credit_risk_artifacts.pkl")
+bundle = joblib.load("credit_risk_artifacts.pkl", mmap_mode=None)
 
 model = bundle["model"]
 scaler = bundle["scaler"]
 features = bundle["features"]
 
-if not hasattr(model, "monotonic_cst"):
-    model.monotonic_cst = None
-
-for t in model.estimators_:
-    if not hasattr(t, "monotonic_cst"):
-        t.monotonic_cst = None
+if sklearn.__version__ != "1.3.2":
+    for t in model.estimators_:
+        setattr(t, "monotonic_cst", None)
 
 def predict_risk(data):
     row = {
@@ -26,11 +24,6 @@ def predict_risk(data):
 
     df = pd.DataFrame([row])[features]
     x_scaled = scaler.transform(df)
-    prob = 0.5
-
-    try:
-        prob = model.predict_proba(x_scaled)[0][1]
-    except AttributeError:
-        pass
+    prob = model.predict_proba(x_scaled)[0][1]
 
     return float(prob)
