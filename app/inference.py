@@ -7,6 +7,9 @@ model = bundle["model"]
 scaler = bundle["scaler"]
 features = bundle["features"]
 
+if not hasattr(model, "monotonic_cst"):
+    model.monotonic_cst = None
+
 for t in model.estimators_:
     if not hasattr(t, "monotonic_cst"):
         t.monotonic_cst = None
