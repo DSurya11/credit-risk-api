@@ -40,3 +40,12 @@ def get_prediction_records(db: Session, limit: int = 10, offset: int = 0):
         .limit(limit)
         .all()
     )
+
+
+def delete_prediction_record(db: Session, prediction_id: int):
+    record = db.query(Prediction).filter(Prediction.id == prediction_id).first()
+    if record:
+        db.delete(record)
+        db.commit()
+        return True
+    return False

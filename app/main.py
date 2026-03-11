@@ -7,7 +7,7 @@ from typing import List
 
 from app.schemas import loaninput, predictionresponse, predictionout
 from app.db.database import get_db, create_tables
-from app.db.crud import create_prediction_record, get_prediction_records
+from app.db.crud import create_prediction_record, get_prediction_records, delete_prediction_record
 from app.inference import predict_risk
 from app.config import approval_threshold
 
@@ -88,3 +88,13 @@ def predict(
         decision=decision
     )
 
+
+@app.delete("/predictions/{prediction_id}")
+def delete_prediction(
+    prediction_id: int,
+    db: Session = Depends(get_db)
+):
+    deleted = delete_prediction_record(db=db, prediction_id=prediction_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Prediction not found")
+    return {"message": f"Prediction {prediction_id} deleted"}
