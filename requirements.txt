@@ -3,8 +3,10 @@ uvicorn
 pydantic
 sqlalchemy
 pymysql
+psycopg2-binary
 python-dotenv
 scikit-learn
 joblib
 pandas
 cryptography
+
