@@ -11,28 +11,6 @@ model = bundle["model"]
 scaler = bundle["scaler"]
 features = bundle["features"]
 
-
-def _patch_monotonic_cst(estimator):
-    """Recursively set monotonic_cst=None on all tree-based estimators.
-
-    Required when a model trained with scikit-learn 1.3.x is loaded
-    in scikit-learn >= 1.6 where DecisionTreeClassifier expects the
-    monotonic_cst attribute to exist.
-    """
-    if not hasattr(estimator, "monotonic_cst"):
-        estimator.monotonic_cst = None
-    if hasattr(estimator, "estimators_"):
-        for sub in estimator.estimators_:
-            _patch_monotonic_cst(sub)
-
-
-if sklearn.__version__ != "1.3.2":
-    logger.info(
-        "Patching model for scikit-learn %s compatibility", sklearn.__version__
-    )
-    _patch_monotonic_cst(model)
-
-
 def predict_risk(data):
     row = {
         "no_of_dependents": data.no_of_dependents,
