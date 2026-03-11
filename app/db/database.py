@@ -42,15 +42,16 @@ db_url = (
     f"@{db_host}:{db_port}/{db_name}"
 )
 
-# Build connect_args — Railway public endpoints require SSL
-connect_args: dict = {"connect_timeout": 10}
+# Build connect_args — Railway public endpoints may require SSL
+connect_args: dict = {"connect_timeout": 30}
 
 # Use SSL when connecting to a remote host (not localhost/127.0.0.1)
 if db_host not in ("localhost", "127.0.0.1", "::1"):
     ssl_ctx = _ssl.create_default_context()
     ssl_ctx.check_hostname = False
     ssl_ctx.verify_mode = _ssl.CERT_NONE
-    connect_args["ssl"] = ssl_ctx
+    # pymysql uses 'ssl_context' for SSLContext objects
+    connect_args["ssl_context"] = ssl_ctx
     logger.info("SSL enabled for remote MySQL connection")
 
 engine = create_engine(

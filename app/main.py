@@ -57,11 +57,17 @@ def predict(
     data: loaninput,
     db: Session = Depends(get_db)
 ):
+    # Step 1: Run ML inference (this must succeed)
     try:
         risk_probability = predict_risk(data)
+    except Exception as e:
+        logger.error(f"ML inference failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Model error: {str(e)}")
 
-        decision = "approved" if risk_probability >= approval_threshold else "rejected"
+    decision = "approved" if risk_probability >= approval_threshold else "rejected"
 
+    # Step 2: Save to database (best-effort — don't fail if DB is down)
+    try:
         create_prediction_record(
             db=db,
             no_of_dependents=data.no_of_dependents,
@@ -74,12 +80,11 @@ def predict(
             decision=decision,
             threshold_used=approval_threshold
         )
-
-        return predictionresponse(
-            risk_probability=risk_probability,
-            decision=decision
-        )
     except Exception as e:
-        logger.error(f"Error during prediction: {e}")
-        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
+        logger.warning(f"Could not save prediction to database: {e}")
+
+    return predictionresponse(
+        risk_probability=risk_probability,
+        decision=decision
+    )
 
